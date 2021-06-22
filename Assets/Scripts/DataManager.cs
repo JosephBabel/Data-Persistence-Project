@@ -4,21 +4,24 @@ using System.IO;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using TMPro;
 
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
 
-public class MenuManager : MonoBehaviour
+public class DataManager : MonoBehaviour
 {
-    public static MenuManager Instance;
+    public static DataManager Instance;
 
-    public string playerName;
+    // Player name field
+    public InputField input;
 
+    // To save on file
+    public string bestPlayerName;
     public int bestScore;
 
-    [SerializeField] private InputField input;
+    // To save between scenes
+    public string currentPlayerName;
 
     void Awake()
     {
@@ -29,13 +32,11 @@ public class MenuManager : MonoBehaviour
 
         Instance = this;
         DontDestroyOnLoad(gameObject);
-
-        LoadHighScore();
     }
 
     public void StartGame()
     {
-        playerName = input.text;
+        currentPlayerName = input.text;
         SceneManager.LoadScene(1);
     }
 
@@ -51,7 +52,7 @@ public class MenuManager : MonoBehaviour
     [System.Serializable]
     class SaveData
     {
-        public string playerName;
+        public string bestPlayerName;
         public int bestScore;
     }
 
@@ -59,7 +60,7 @@ public class MenuManager : MonoBehaviour
     {
         SaveData data = new SaveData
         {
-            playerName = playerName,
+            bestPlayerName = bestPlayerName,
             bestScore = bestScore
         };
 
@@ -76,7 +77,7 @@ public class MenuManager : MonoBehaviour
             string json = File.ReadAllText(Application.persistentDataPath + "/savefile.json");
             SaveData data = JsonUtility.FromJson<SaveData>(json);
 
-            playerName = data.playerName;
+            bestPlayerName = data.bestPlayerName;
             bestScore = data.bestScore;
         }
     }
