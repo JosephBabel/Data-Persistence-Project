@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using TMPro;
+
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -15,6 +16,10 @@ public class MenuManager : MonoBehaviour
 
     public string playerName;
 
+    public int bestScore;
+
+    [SerializeField] private InputField input;
+
     void Awake()
     {
         if (Instance != null)
@@ -24,15 +29,13 @@ public class MenuManager : MonoBehaviour
 
         Instance = this;
         DontDestroyOnLoad(gameObject);
-    }
 
-    void Update()
-    {
-        
+        LoadHighScore();
     }
 
     public void StartGame()
     {
+        playerName = input.text;
         SceneManager.LoadScene(1);
     }
 
@@ -45,13 +48,36 @@ public class MenuManager : MonoBehaviour
 #endif
     }
 
+    [System.Serializable]
+    class SaveData
+    {
+        public string playerName;
+        public int bestScore;
+    }
+
     public void SaveHighScore()
     {
-        //TODO
+        SaveData data = new SaveData
+        {
+            playerName = playerName,
+            bestScore = bestScore
+        };
+
+        string json = JsonUtility.ToJson(data);
+
+        File.WriteAllText(Application.persistentDataPath + "/savefile.json", json);
     }
 
     public void LoadHighScore()
     {
-        //TODO
+        string path = Application.persistentDataPath + "/savefile.json";
+        if (File.Exists(path))
+        {
+            string json = File.ReadAllText(Application.persistentDataPath + "/savefile.json");
+            SaveData data = JsonUtility.FromJson<SaveData>(json);
+
+            playerName = data.playerName;
+            bestScore = data.bestScore;
+        }
     }
 }
