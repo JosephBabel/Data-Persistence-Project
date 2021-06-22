@@ -14,9 +14,12 @@ public class MainMenu : MonoBehaviour
         string bestPlayerName = DataManager.Instance.bestPlayerName;
         int bestScore = DataManager.Instance.bestScore;
 
-        if (bestPlayerName != null)
+        if (bestScore != 0)
         {
             bestScoreText.text = "Best Score : " + bestPlayerName + " : " + bestScore;
         }
+
+        Debug.Log(Application.persistentDataPath);
+        Debug.Log(bestPlayerName);
     }
 }
